@@ -2,22 +2,28 @@
 set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
 source "$PLUGIN_CORE_AVAILABLE_PATH/common/functions"
 
-destroy_temp_dir() {
+copy_from_repo_to_app() {
   local APP="$1"
-  local TMPDIR
-  TMPDIR=$(mktemp -d)
+  verify_app_name "$APP"
+
   trap 'rm -rf "$TMP_WORK_DIR" > /dev/null' RETURN
 
-  dokku_col_log_info1_quiet "Checking for config supplied in repo"
-
-  cd "$TMPDIR" && git clone -q "$DOKKU_ROOT/$APP" repo > /dev/null 2>&1
-
-  if [[ -d "$TMPDIR/repo/.dokku" ]] && [[ "$(ls -A "$TMPDIR/repo/.dokku")" ]]; then
+  if [[ -d "$TMP_WORK_DIR/repo/.dokku" ]] && [[ "$(ls -A "$TMP_WORK_DIR/repo/.dokku")" ]]; then
+    dokku_log_info1 "Copy files from repo to application directory..."
     for file in repo/.dokku/*; do
-      dokku_log_verbose_quiet "$(basename "$file")"
+      dokku_log_verbose "- Copying $(basename "$file")"
       cp -R "$file" "$DOKKU_ROOT/$APP/"
     done
+  else
+    dokku_log_info1 "Nothing to copy from repository to application directory"
   fi
 }
 
-destroy_temp_dir "$1"
+copy_from_repo_to_app "$1"
+
+
+
+
+
+
+
