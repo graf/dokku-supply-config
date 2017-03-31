@@ -8,7 +8,7 @@ copy_from_repo_to_app() {
 
   trap 'rm -rf "$TMP_WORK_DIR" > /dev/null' RETURN
 
-  if [[ -d "$TMP_WORK_DIR/repo/.dokku" ]] && [[ "$(ls -A "$TMP_WORK_DIR/repo/.dokku")" ]]; then
+  if [[ -d "$TMP_WORK_DIR/.dokku" ]] && [[ "$(ls -A "$TMP_WORK_DIR/.dokku")" ]]; then
     dokku_log_info1 "Copy files from repo to application directory..."
     for file in repo/.dokku/*; do
       dokku_log_verbose "- Copying $(basename "$file")"
