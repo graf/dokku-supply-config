@@ -4,13 +4,14 @@ source "$PLUGIN_CORE_AVAILABLE_PATH/common/functions"
 
 copy_from_repo_to_app() {
   local APP="$1"
+  local TMP_WORK_DIR="$2"
   verify_app_name "$APP"
 
   trap 'rm -rf "$TMP_WORK_DIR" > /dev/null' RETURN
 
   if [[ -d "$TMP_WORK_DIR/.dokku" ]] && [[ "$(ls -A "$TMP_WORK_DIR/.dokku")" ]]; then
     dokku_log_info1 "Copy files from repo to application directory..."
-    for file in repo/.dokku/*; do
+    for file in .dokku/*; do
       dokku_log_verbose "- Copying $(basename "$file")"
       cp -R "$file" "$DOKKU_ROOT/$APP/"
     done
@@ -19,7 +20,7 @@ copy_from_repo_to_app() {
   fi
 }
 
-copy_from_repo_to_app "$1"
+copy_from_repo_to_app "$1" "$2"
 
 
 
